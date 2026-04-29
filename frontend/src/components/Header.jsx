@@ -2,6 +2,7 @@ import { NavLink, Link } from 'react-router-dom'
 
 const NAV = [
   { to: '/', label: '홈', end: true },
+  { to: '/plan', label: '코스 짜기' },
   { to: '/exhibitions', label: '전시 안내' },
   { to: '/browse', label: '소장품 둘러보기' },
   { to: '/ask', label: 'AI 도슨트' },

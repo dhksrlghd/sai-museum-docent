@@ -22,6 +22,47 @@ export async function getWork(relicId) {
   return r.json()
 }
 
+// SSE 스트리밍 코스 빌더
+export async function streamPlan(payload, callbacks = {}) {
+  const { onCandidates, onToken, onError, signal } = callbacks
+  const resp = await fetch('/api/plan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal,
+  })
+  if (!resp.ok || !resp.body) {
+    onError?.(`HTTP ${resp.status}`)
+    return
+  }
+  const reader = resp.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const SEP = /\r\n\r\n|\n\n|\r\r/
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    let m
+    while ((m = SEP.exec(buffer))) {
+      const raw = buffer.slice(0, m.index)
+      buffer = buffer.slice(m.index + m[0].length)
+      const ev = parseSSE(raw)
+      if (!ev) continue
+      if (ev.event === 'candidates') {
+        try { onCandidates?.(JSON.parse(ev.data)) } catch { /* ignore */ }
+      } else if (ev.event === 'token') {
+        onToken?.(ev.data)
+      } else if (ev.event === 'error') {
+        onError?.(ev.data)
+        return
+      } else if (ev.event === 'done') {
+        return
+      }
+    }
+  }
+}
+
 // SSE 스트리밍 챗
 export async function streamChat(query, mode, callbacks = {}) {
   const { onSources, onToken, onError, signal } = callbacks

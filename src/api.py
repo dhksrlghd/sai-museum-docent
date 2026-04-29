@@ -120,6 +120,13 @@ class ChatRequest(BaseModel):
     k: int = 5
 
 
+class PlanRequest(BaseModel):
+    duration_min: int = 60        # 30/60/90/120
+    companion: str = "self"       # self | kid | foreign
+    interests: str = ""           # 자유 텍스트
+    k: int = 18                   # 후보 작품 retrieval 개수
+
+
 # ---- 헬퍼 ----
 def search_full(query: str, k: int) -> list[dict]:
     model = _state["model"]
@@ -243,6 +250,152 @@ async def get_work(relic_id: int) -> dict:
     if thumb.get("thumbnail_url"):
         data["thumbnail_url"] = thumb["thumbnail_url"]
     return data
+
+
+# ---- 관람 코스 빌더 ----
+COMPANION_HINT = {
+    "self": "성인 1인 관람.  차분한 큐레이터 톤으로 작품의 핵심 가치를 짚어 주세요.",
+    "kid":  "어린이 동반.  '~예요/~해요' 말투, 시각적이고 흥미로운 작품 위주로, 어려운 한자어는 피하세요.",
+    "foreign": "외국인 동반.  반드시 영어로 작성하되 작품명은 한자/한글 병기 (예: Banga Sayusang 半跏思惟像 / 'Pensive Bodhisattva'). 한국 문화 입문에 좋은 대표작 위주.",
+}
+
+PLAN_SYSTEM_PROMPT = (
+    "You are a National Museum of Korea tour-curating expert. "
+    "Given visitor constraints and a list of candidate works (with their gallery locations), "
+    "design an efficient, narrative-driven viewing course. "
+    "Strictly use only the works in the candidate list — never invent works. "
+    "Optimize the path so that gallery-floor transitions are minimized "
+    "(group works by floor, then by hall, in order 1F → 2F → 3F or reverse). "
+    "Allocate roughly 6–10 minutes per work plus 3 minutes between floors. "
+    "If the candidate list does not contain enough on-display works, "
+    "you may still include curator-recommended works (without specific location) "
+    "and clearly mark them as '큐레이터 추천 (위치 정보 없음)'."
+)
+
+
+def plan_user_prompt(req: PlanRequest, candidates: list[dict]) -> str:
+    cand_lines = []
+    for i, c in enumerate(candidates, 1):
+        meta = c["metadata"]
+        title = meta.get("title", "")
+        sub = meta.get("subtitle", "")
+        full = f"{title} - {sub}" if sub else title
+        cat = meta.get("category", "")
+        loc = meta.get("location", "") or (
+            f"{meta.get('hall','')} {meta.get('floor','')}" if meta.get("hall") else "위치 정보 없음"
+        )
+        period = meta.get("period", "")
+        snippet = c["text"][:180].replace("\n", " ")
+        cand_lines.append(
+            f"[{i}] ({cat}) {full}\n"
+            f"    위치: {loc}  / 시대: {period}\n"
+            f"    요약: {snippet}…"
+        )
+    cand_block = "\n".join(cand_lines)
+
+    companion_label = {"self": "성인 1인", "kid": "어린이와 함께", "foreign": "외국인 친구와 함께"}[req.companion]
+
+    return (
+        f"=== 관람객 정보 ===\n"
+        f"가용 시간: {req.duration_min}분\n"
+        f"동반자: {companion_label}\n"
+        f"동반자 톤 가이드: {COMPANION_HINT[req.companion]}\n"
+        f"관심사: {req.interests or '(미지정 — 박물관 대표작 중심)'}\n\n"
+        f"=== 작품 후보 ({len(candidates)}점) ===\n"
+        f"{cand_block}\n\n"
+        f"위 후보에서 가용 시간에 맞게 4~7점을 골라 코스를 작성하세요.\n\n"
+        f"출력 형식 (한국어 마크다운, 단 동반자가 외국인이면 영어로):\n"
+        f"## 오늘의 코스 — 약 {req.duration_min}분\n\n"
+        f"한 단락 도입 (3~4줄): 오늘 코스의 테마와 동선 한 줄 요약.\n\n"
+        f"### 1. 작품명 — 위치 (X분)\n"
+        f"왜 이 작품을 골랐는지, 무엇을 주목해서 볼지 2~3문장.\n\n"
+        f"### 2. 작품명 — 위치 (X분)\n"
+        f"...\n\n"
+        f"각 작품 사이에 층/관 이동이 있으면 화살표 한 줄로 표시: \n"
+        f"`→ 1F 선사·고대관 → 2F 서화관 (이동 3분)`\n\n"
+        f"마지막에 한 단락 마무리 인사."
+    )
+
+
+def fetch_plan_candidates(req: PlanRequest) -> list[dict]:
+    """관심사 임베딩으로 top-k 청크 retrieve, 작품 단위 dedupe."""
+    model = _state["model"]
+    coll = _state["collection"]
+    seed = req.interests.strip() or "한국 미술 대표작"
+    emb = model.encode([QUERY_PREFIX + seed], normalize_embeddings=True)[0]
+    res = coll.query(
+        query_embeddings=[emb.tolist()],
+        n_results=req.k * 3,  # dedupe 위해 넉넉히
+        include=["documents", "metadatas", "distances"],
+    )
+    out: list[dict] = []
+    seen = set()
+    for doc, meta, dist in zip(
+        res["documents"][0], res["metadatas"][0], res["distances"][0]
+    ):
+        key = meta.get("relic_id") or (meta.get("title", ""), meta.get("category", ""))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"text": doc, "metadata": meta, "score": 1.0 - dist})
+        if len(out) >= req.k:
+            break
+    return out
+
+
+@app.post("/api/plan")
+async def plan(req: PlanRequest):
+    if req.companion not in COMPANION_HINT:
+        raise HTTPException(400, f"invalid companion: {req.companion}")
+    if req.duration_min not in (30, 60, 90, 120, 180):
+        raise HTTPException(400, "duration_min must be one of 30/60/90/120/180")
+
+    candidates = fetch_plan_candidates(req)
+    course_meta = [
+        {
+            "relic_id": c["metadata"].get("relic_id"),
+            "title": c["metadata"].get("title", ""),
+            "subtitle": c["metadata"].get("subtitle", ""),
+            "category": c["metadata"].get("category", ""),
+            "hall": c["metadata"].get("hall", ""),
+            "floor": c["metadata"].get("floor", ""),
+            "location": c["metadata"].get("location", ""),
+            "thumbnail_url": _state["thumbnails"].get(
+                c["metadata"].get("relic_id"), {}
+            ).get("thumbnail_url", "")
+            or c["metadata"].get("thumbnail_url", ""),
+        }
+        for c in candidates
+    ]
+
+    user_prompt = plan_user_prompt(req, candidates)
+    client = _state["openai"]
+
+    async def event_stream() -> AsyncIterator[dict]:
+        yield {
+            "event": "candidates",
+            "data": json.dumps(course_meta, ensure_ascii=False),
+        }
+        try:
+            stream = client.chat.completions.create(
+                model=LLM_MODEL,
+                messages=[
+                    {"role": "system", "content": PLAN_SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.6,
+                stream=True,
+            )
+            for ev in stream:
+                delta = ev.choices[0].delta.content
+                if delta:
+                    yield {"event": "token", "data": delta}
+        except Exception as e:
+            yield {"event": "error", "data": str(e)}
+            return
+        yield {"event": "done", "data": ""}
+
+    return EventSourceResponse(event_stream())
 
 
 @app.post("/api/chat")
