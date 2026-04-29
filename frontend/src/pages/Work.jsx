@@ -181,7 +181,7 @@ export default function Work() {
         </div>
 
         {/* 우측 AI 도슨트 패널 */}
-        <aside className="lg:sticky lg:top-20 lg:self-start lg:h-[calc(100vh-6rem)]">
+        <aside className="h-[70vh] lg:h-[calc(100vh-6rem)] lg:sticky lg:top-20 lg:self-start">
           <AskBox
             variant="panel"
             initialQuery={data.title ? `${data.title}에 대해 더 자세히 알려주세요` : ''}

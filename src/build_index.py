@@ -66,6 +66,17 @@ def load_special() -> list[dict]:
     return data.get("exhibitions", [])
 
 
+def load_locations() -> dict[int, dict]:
+    """추천 작품 ↔ 상설 매칭 결과 (relic_id → {hall, floor, room_name})."""
+    fp = RAW_DIR / "relic_locations.json"
+    if not fp.exists():
+        return {}
+    with fp.open(encoding="utf-8") as f:
+        data = json.load(f)
+    # JSON 키는 문자열로 저장됨 → int로 복원
+    return {int(k): v for k, v in (data.get("matched") or {}).items()}
+
+
 # 모든 청크가 공유하는 메타 키 (Chroma는 일관된 스키마를 선호)
 EMPTY_META = {
     "category": "",     # recommend | permanent | special
@@ -86,6 +97,9 @@ EMPTY_META = {
     "relic_id": 0,
     "exhi_id": "",
 }
+
+
+_RELIC_LOCATIONS: dict = {}  # main()에서 채워넣음
 
 
 def chunk_relic(relic: dict) -> list[dict]:
@@ -118,6 +132,7 @@ def chunk_relic(relic: dict) -> list[dict]:
             end = heading_idx[i + 1] if i + 1 < len(heading_idx) else len(body)
             section_ranges.append((body[hi]["text"], hi, end))
 
+    loc = _RELIC_LOCATIONS.get(relic["relic_recommend_id"], {})
     base_meta = {
         **EMPTY_META,
         "category": "recommend",
@@ -129,6 +144,13 @@ def chunk_relic(relic: dict) -> list[dict]:
         "medium": md.get("medium", "") or "",
         "grade": md.get("grade", "") or "",
         "source_url": relic.get("source_url", "") or "",
+        # 매칭된 상설 위치 (있을 때만)
+        "hall": loc.get("hall", "") or "",
+        "floor": loc.get("floor", "") or "",
+        "room_name": loc.get("room_name", "") or "",
+        "location": (
+            f"{loc['hall']} {loc['floor']}" if loc.get("hall") else ""
+        ),
     }
 
     chunks = []
@@ -366,9 +388,12 @@ def main() -> int:
     relics = load_relics()
     permanent_rooms = load_permanent()
     special_exhibitions = load_special()
+    global _RELIC_LOCATIONS
+    _RELIC_LOCATIONS = load_locations()
     print(
         f"[build_index] 로드: 추천 작품 {len(relics)}건 / "
-        f"상설 실 {len(permanent_rooms)}개 / 특별전 {len(special_exhibitions)}건"
+        f"상설 실 {len(permanent_rooms)}개 / 특별전 {len(special_exhibitions)}건 / "
+        f"위치 매칭 {len(_RELIC_LOCATIONS)}건"
     )
 
     recommend_chunks = build_chunks(relics)

@@ -76,10 +76,20 @@ def discover_rooms(hall_entry_url: str) -> list[dict]:
     return rooms
 
 
+def _korean_ratio(s: str) -> float:
+    """문자열에서 한글(가-힣) 비율. alt 텍스트(영어)와 한국어 본문 구분용."""
+    if not s:
+        return 0.0
+    korean = sum(1 for c in s if "가" <= c <= "힣")
+    total_letters = sum(1 for c in s if c.isalpha())
+    if total_letters == 0:
+        return 0.0
+    return korean / total_letters
+
+
 def parse_room_page(soup: BeautifulSoup) -> dict:
-    """실 페이지에서:
-      - title (브레드크럼에서 끝부분)
-      - intro: '전시실 소개' 이후 단락들
+    """실 페이지 파싱:
+      - intro: 한국어 비율이 높은 단락들 모음 (영어 alt 텍스트, 부모 관 공통 안내 제외)
       - works: '전시품' 섹션의 작품 이름 리스트
     """
     out = {"intro": "", "works": [], "page_title": ""}
@@ -90,22 +100,40 @@ def parse_room_page(soup: BeautifulSoup) -> dict:
     if not container:
         return out
 
-    # 페이지 텍스트를 한 덩어리로 받아서 마커 기반 잘라내기
-    text = container.get_text("\n", strip=True)
+    # ------ intro 추출 ------
+    # 의미있는 단락(50~2500자)이고, 한국어 비율 ≥ 60%인 것들만 수집
+    candidates: list[str] = []
+    seen_signatures: set = set()
+    for el in container.find_all(["div", "p"]):
+        # 자식에 큰 컨테이너가 또 있으면 패스 (중복 방지)
+        if el.find(["div", "p", "ul", "ol", "table"]):
+            continue
+        text = el.get_text(" ", strip=True)
+        if not text or len(text) < 50 or len(text) > 2500:
+            continue
+        # alt 텍스트 마커 / 네비게이션 제거
+        if re.match(r"^\(.*?에 대한 대체", text):
+            continue
+        if re.match(r"^(QR|주소|스크랩|인쇄|공유|Home|이전|다음|페이지|첨부|위치)", text):
+            continue
+        # 한국어 비율 필터
+        if _korean_ratio(text) < 0.55:
+            continue
+        # 중복(같은 시작 60자) 제거
+        sig = text[:60]
+        if sig in seen_signatures:
+            continue
+        seen_signatures.add(sig)
+        candidates.append(text)
 
-    # '전시실 소개' 마커 찾기
-    intro_match = re.search(r"전시실 소개\s*\n(.+?)(?=\n(?:디지털|전시품|페이지|이전|다음|첫\s*페이지|\Z))",
-                            text, re.S)
-    if intro_match:
-        out["intro"] = re.sub(r"\n+", "\n", intro_match.group(1)).strip()
+    # 부모 관 공통 안내(같은 관의 모든 실에서 반복되는 130자짜리)는 호출자가 제거
+    out["intro"] = "\n\n".join(candidates).strip()
 
-    # 전시품: 보통 '전시품' 섹션 아래에 작품명들이 한 줄씩 나오는 구조
-    # 페이지에서 li/tag 구조로 더 정확히 잡자
-    works = []
-    # 전시품 섹션 헤더(h3, h4 등)부터 시작해 다음 헤더 전까지 li 수집
+    # ------ works 추출 ------
+    works: list[str] = []
+    # '전시품' 섹션 헤더부터 다음 헤더 전까지의 li 수집
     for hdr in container.find_all(["h3", "h4", "h5"]):
         if hdr.get_text(strip=True) == "전시품":
-            # 다음 형제들 중 ul/ol/dl 또는 텍스트 노드 검사
             sib = hdr.find_next_sibling()
             steps = 0
             while sib and steps < 8:
@@ -121,8 +149,9 @@ def parse_room_page(soup: BeautifulSoup) -> dict:
                 steps += 1
             break
 
-    # 백업: 위 마커 못 찾으면 텍스트에서 '전시품' ~ '전시실 소개' 사이 줄 수집
+    # 백업: 텍스트 마커 기반
     if not works:
+        text = container.get_text("\n", strip=True)
         m = re.search(r"전시품\s*\n(.+?)(?=\n(?:전시실 소개|이전|다음|페이지|\Z))", text, re.S)
         if m:
             for line in m.group(1).splitlines():
