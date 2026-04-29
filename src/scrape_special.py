@@ -71,11 +71,17 @@ def parse_listing(soup: BeautifulSoup) -> list[dict]:
             elif "장소" in t and not location:
                 location = re.sub(r"^장소\s*", "", t)
 
-        # 썸네일
+        # 썸네일: 첫 <img>는 hover-over 버튼 아이콘이므로 건너뛰고,
+        # previewThumbnail 또는 실제 썸네일 경로를 가진 img를 우선 선택.
         thumb = ""
-        img = li.find("img")
-        if img and img.get("src"):
-            thumb = urljoin(BASE_URL, img["src"])
+        for cand in li.find_all("img"):
+            src = cand.get("src", "")
+            if not src:
+                continue
+            if "btn_more_report" in src or "/btn/" in src:
+                continue
+            thumb = urljoin(BASE_URL, src)
+            break
 
         # 중복 방지
         if any(it["exhi_id"] == eid for it in items):
