@@ -55,6 +55,10 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 # 약 120MB e5-small 모델이 /tmp/hf_cache 에 캐시되고, data/chroma/ 가 생성된다.
 RUN python src/build_index.py
 
+# CLIP 이미지 임베딩 (작품 사진 ~900장 → 닮은 작품 검색용)
+# 실패해도 본 인덱스/엔드포인트는 그대로 동작하도록 || true 로 폴백.
+RUN python src/embed_images.py || echo "[warn] image embedding skipped"
+
 # 캐시 디렉토리 권한 (HF Space는 비루트 1000 유저)
 RUN chmod -R 777 /app/.cache /app/data
 

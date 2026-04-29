@@ -12,6 +12,7 @@ const HERO_PICKS = [
 export default function Home() {
   const [hero, setHero] = useState(null)
   const [picks, setPicks] = useState([])
+  const [today, setToday] = useState(null)
   const [special, setSpecial] = useState([])
   const [hi, setHi] = useState(0)
 
@@ -37,10 +38,16 @@ export default function Home() {
           exhi = j.special || []
         }
       } catch { /* ignore */ }
+      let todayData = null
+      try {
+        const r = await fetch('/api/today')
+        if (r.ok) todayData = await r.json()
+      } catch { /* ignore */ }
       if (cancelled) return
       setHero(heroData.filter(Boolean))
       setPicks(all.items || [])
       setSpecial(exhi)
+      setToday(todayData)
     }
     load()
     return () => { cancelled = true }
@@ -152,25 +159,86 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 추천 그리드 */}
-      <section className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <div className="text-xs tracking-[0.3em] text-[var(--color-vermilion-500)] uppercase mb-2">
-              Curators' Picks
+      {/* 오늘의 큐레이션 */}
+      {today?.picks?.length > 0 && (
+        <section className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
+          <div className="flex items-end justify-between mb-8">
+            <div>
+              <div className="text-xs tracking-[0.3em] text-[var(--color-vermilion-500)] uppercase mb-2">
+                Today's Curation · {today.date}
+              </div>
+              <h2
+                className="text-3xl sm:text-4xl font-bold text-[var(--color-ink-900)]"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                {today.theme.ko}
+              </h2>
+              <p className="text-sm text-[var(--color-ink-500)] mt-1">
+                {today.theme.en}
+              </p>
             </div>
-            <h2
-              className="text-3xl sm:text-4xl font-bold text-[var(--color-ink-900)]"
-              style={{ fontFamily: 'var(--font-display)' }}
+            <Link
+              to="/browse"
+              className="text-sm font-medium text-[var(--color-ink-700)] hover:text-[var(--color-vermilion-500)] transition"
             >
-              지금 만나보세요
-            </h2>
+              전체 321점 보기 →
+            </Link>
           </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+            {today.picks.map((w) => (
+              <Link
+                key={w.relic_id}
+                to={`/work/${w.relic_id}`}
+                className="group block rounded-md overflow-hidden bg-white border border-[var(--color-paper-200)] hover:border-[var(--color-ink-500)] transition"
+              >
+                <div className="aspect-[4/5] bg-[var(--color-paper-100)] overflow-hidden">
+                  {w.thumbnail_url && (
+                    <img
+                      src={w.thumbnail_url}
+                      alt={w.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => { e.currentTarget.style.display = 'none' }}
+                    />
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3
+                    className="text-base font-semibold text-[var(--color-ink-900)] line-clamp-2"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    {w.title}
+                  </h3>
+                  {w.subtitle && (
+                    <p className="text-xs text-[var(--color-ink-500)] mt-1 line-clamp-1">
+                      {w.subtitle}
+                    </p>
+                  )}
+                  <div className="mt-2 text-[11px] text-[var(--color-ink-500)]">
+                    {w.period && <span>{w.period}</span>}
+                    {w.curator && <span> · 큐레이터 {w.curator}</span>}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 더 보기 (랜덤 12) */}
+      <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-16">
+        <div className="flex items-end justify-between mb-6">
+          <h2
+            className="text-2xl font-bold text-[var(--color-ink-900)]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            더 둘러보기
+          </h2>
           <Link
             to="/browse"
             className="text-sm font-medium text-[var(--color-ink-700)] hover:text-[var(--color-vermilion-500)] transition"
           >
-            전체 321점 보기 →
+            321점 전체 →
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">

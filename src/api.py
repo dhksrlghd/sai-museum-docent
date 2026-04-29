@@ -37,6 +37,10 @@ from rag import (
     SYSTEM_PROMPTS,
     build_user_prompt,
 )
+from daily_pick import today_theme, picks_for_theme
+
+IMAGE_COLLECTION = "kcurator_images"
+CLIP_MODEL_NAME = "sentence-transformers/clip-ViT-B-32"
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
@@ -52,6 +56,9 @@ _state: dict = {
     "openai": None,
     "permanent": [],   # 상설전시 실 리스트
     "special": [],     # 특별전 리스트
+    "clip_model": None,
+    "image_collection": None,
+    "today_cache": {},  # date_str -> {theme, picks}
 }
 
 
@@ -91,6 +98,18 @@ async def lifespan(app: FastAPI):
     if not os.getenv("OPENAI_API_KEY"):
         print("[api] WARNING: OPENAI_API_KEY not set — chat endpoint will fail")
     _state["openai"] = OpenAI()
+
+    # CLIP 이미지 컬렉션 (있으면 로드)
+    try:
+        _state["image_collection"] = client.get_collection(IMAGE_COLLECTION)
+        print(f"[api] Image collection size = {_state['image_collection'].count()}")
+        # 이미지 컬렉션이 있으면 CLIP 이미지 인코더 모델도 로드
+        print(f"[api] Loading CLIP model: {CLIP_MODEL_NAME}")
+        _state["clip_model"] = SentenceTransformer(CLIP_MODEL_NAME)
+        print("[api] CLIP model ready.")
+    except Exception as e:
+        print(f"[api] No image collection ({e}); /similar endpoint disabled.")
+
     print("[api] Ready.")
     yield
     # shutdown: nothing to clean explicitly
@@ -197,6 +216,84 @@ async def list_works(
     if limit:
         items = items[offset : offset + limit]
     return {"total": total, "offset": offset, "items": items}
+
+
+@app.get("/api/today")
+async def today_pick() -> dict:
+    """오늘의 테마 + 추천 작품 6점 (당일 캐시)."""
+    import datetime as _dt
+    today = _dt.date.today()
+    key = today.isoformat()
+    cached = _state["today_cache"].get(key)
+    if cached:
+        return cached
+    theme = today_theme(today)
+    picks = picks_for_theme(
+        theme,
+        _state["model"],
+        _state["collection"],
+        _state["thumbnails"],
+        QUERY_PREFIX,
+        n=6,
+    )
+    out = {"date": key, "theme": theme, "picks": picks}
+    _state["today_cache"][key] = out
+    # 어제 캐시는 자동 청소
+    for k in list(_state["today_cache"].keys()):
+        if k != key:
+            _state["today_cache"].pop(k, None)
+    return out
+
+
+@app.get("/api/works/{relic_id}/similar")
+async def similar_works(relic_id: int, k: int = 6) -> dict:
+    """이미지 임베딩으로 유사 작품 N점.
+    해당 작품의 첫 이미지 임베딩을 query로 사용한다.
+    """
+    img_coll = _state.get("image_collection")
+    if not img_coll:
+        raise HTTPException(503, "image index not available")
+
+    # 1) 입력 작품의 임베딩 ID 후보들
+    src = img_coll.get(
+        where={"relic_id": relic_id},
+        include=["embeddings", "metadatas"],
+    )
+    if not src["ids"]:
+        raise HTTPException(404, f"no images indexed for relic {relic_id}")
+
+    # 2) 첫 이미지의 임베딩으로 유사 검색
+    query_emb = src["embeddings"][0]
+    res = img_coll.query(
+        query_embeddings=[query_emb if isinstance(query_emb, list) else query_emb.tolist()],
+        n_results=k * 4 + 1,  # 자기 자신 + 같은 작품 dedupe 여유
+        include=["metadatas", "distances"],
+    )
+
+    # 3) 같은 작품 제외 + 작품 단위 dedupe
+    seen: set = {relic_id}
+    out: list[dict] = []
+    for meta, dist in zip(res["metadatas"][0], res["distances"][0]):
+        rid = meta.get("relic_id")
+        if not rid or rid in seen:
+            continue
+        seen.add(rid)
+        thumb = _state["thumbnails"].get(rid, {})
+        out.append(
+            {
+                "relic_id": rid,
+                "title": meta.get("title", ""),
+                "subtitle": meta.get("subtitle", ""),
+                "curator": meta.get("curator", ""),
+                "period": meta.get("period", ""),
+                "image_url": meta.get("url", ""),
+                "thumbnail_url": thumb.get("thumbnail_url", "") or meta.get("url", ""),
+                "score": round(1.0 - dist, 3),
+            }
+        )
+        if len(out) >= k:
+            break
+    return {"source_relic_id": relic_id, "similar": out}
 
 
 @app.get("/api/exhibitions")

@@ -7,15 +7,22 @@ export default function Work() {
   const { id } = useParams()
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
+  const [similar, setSimilar] = useState([])
 
   useEffect(() => {
     let cancelled = false
     setData(null)
     setError(null)
+    setSimilar([])
     getWork(id).then(
       (d) => { if (!cancelled) setData(d) },
       (e) => { if (!cancelled) setError(e.message || 'failed') },
     )
+    // 비슷한 작품 (이미지 임베딩 — 사용 가능할 때만)
+    fetch(`/api/works/${id}/similar?k=6`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (!cancelled && j?.similar) setSimilar(j.similar) })
+      .catch(() => {})
     return () => { cancelled = true }
   }, [id])
 
@@ -124,6 +131,52 @@ export default function Work() {
             <div className="mt-10 p-4 rounded-md bg-[var(--color-paper-100)] text-xs text-[var(--color-ink-500)] leading-relaxed">
               {data.license}
             </div>
+          )}
+
+          {/* 비슷한 작품 (CLIP 이미지 유사도) */}
+          {similar.length > 0 && (
+            <section className="mt-12">
+              <div className="flex items-baseline gap-3 mb-4">
+                <h3
+                  className="text-xl font-bold text-[var(--color-ink-900)]"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  이 작품과 닮은 작품
+                </h3>
+                <span className="text-xs text-[var(--color-ink-500)]">
+                  이미지 분위기·구도 기반 추천
+                </span>
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                {similar.map((s) => (
+                  <Link
+                    key={s.relic_id}
+                    to={`/work/${s.relic_id}`}
+                    className="group block rounded-md overflow-hidden border border-[var(--color-paper-200)] bg-white hover:border-[var(--color-ink-500)] transition"
+                  >
+                    <div className="aspect-square bg-[var(--color-paper-100)] overflow-hidden">
+                      {s.thumbnail_url && (
+                        <img
+                          src={s.thumbnail_url}
+                          alt={s.title}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => { e.currentTarget.style.display = 'none' }}
+                        />
+                      )}
+                    </div>
+                    <div className="px-2 py-2">
+                      <div className="text-xs font-semibold text-[var(--color-ink-900)] line-clamp-1">
+                        {s.title}
+                      </div>
+                      <div className="text-[10px] text-[var(--color-ink-500)]">
+                        유사도 {(s.score * 100).toFixed(0)}%
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
           )}
         </div>
 

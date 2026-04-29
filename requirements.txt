@@ -10,6 +10,7 @@ lxml>=5.0,<7
 # 벡터 검색 + 임베딩
 chromadb>=1.5,<2
 sentence-transformers>=5.0,<6
+Pillow>=10,<12  # CLIP 이미지 임베딩
 
 # LLM
 openai>=2.0,<3
