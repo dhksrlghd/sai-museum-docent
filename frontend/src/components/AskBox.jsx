@@ -15,9 +15,9 @@ const PLACEHOLDERS = {
 }
 
 const INTRO = {
-  adult: '큐레이터 해설을 바탕으로 답해드립니다. 무엇이 궁금하세요?',
+  adult: '작품과 당신 사이, 큐레이터 해설로 답해드립니다. 무엇이 궁금하세요?',
   kid: '안녕! 박물관 작품에 대해 무엇이든 물어봐 주세요.',
-  foreign: 'Ask me anything about works in the National Museum of Korea.',
+  foreign: "I'm SAI, your docent. Ask me anything about works in the National Museum of Korea.",
 }
 
 export default function AskBox({

@@ -1,20 +1,23 @@
 ---
-title: K-Curator
+title: 사이 SAI · 한국 박물관 도슨트
 emoji: 🏛️
 colorFrom: red
 colorTo: yellow
 sdk: docker
 app_port: 7860
 pinned: false
-short_description: 국립중앙박물관 큐레이터 도슨트 — RAG + 멀티모달 + 관람 코스 빌더
+short_description: 작품과 당신 사이 — 국립중앙박물관 큐레이터 해설 기반 RAG·멀티모달 도슨트
 ---
 
-# K-Curator
+# 사이 (SAI) · 작품과 당신 사이를 잇다
 
 > **"챗봇이 아니라 박물관 컴패니언"** —
 > 국립중앙박물관 큐레이터 해설을 기반으로,
 > 가기 전엔 코스 추천, 가서는 작품 해설, 다녀와선 매일 다른 큐레이션을 보여주는
 > 풀스택 RAG·멀티모달 사이드 프로젝트.
+>
+> 이름 **사이**는 "사이(in-between)"의 사이.
+> 작품과 당신 사이, 큐레이터의 시선과 관람객 사이, 어제와 오늘 사이를 잇는다는 뜻.
 
 ## 무엇이 차별화되는가
 

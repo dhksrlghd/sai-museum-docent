@@ -82,20 +82,21 @@ export default function Home() {
       {/* HERO */}
       <section className="relative bg-[var(--color-ink-900)] text-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24 grid lg:grid-cols-2 gap-10 items-center">
-          <div>
+          <div className="break-keep">
             <div className="inline-block text-xs tracking-[0.3em] text-[var(--color-vermilion-500)] mb-4 uppercase">
-              National Museum · Curators' Picks
+              Between you & Korean art
             </div>
             <h1
-              className="text-4xl sm:text-5xl font-bold leading-tight mb-4"
+              className="text-4xl sm:text-5xl font-bold leading-[1.15] mb-4 break-keep"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              큐레이터의 시선으로 보는<br />
-              <span className="text-[var(--color-vermilion-500)]">한국의 명품 321선</span>
+              작품과 당신,
+              <br />
+              <span className="text-[var(--color-vermilion-500)]">그 사이를 잇다</span>
             </h1>
-            <p className="text-base text-white/70 leading-relaxed mb-8 max-w-xl">
-              국립중앙박물관 큐레이터들이 직접 선정·해설한 작품을 가까이서 살펴보고,
-              궁금한 부분은 AI 도슨트에게 어린이·성인·외국인 톤으로 물어보세요.
+            <p className="text-base text-white/70 leading-relaxed mb-8 max-w-xl break-keep">
+              국립중앙박물관 큐레이터들이 직접 선정·해설한 명품 321선을 가까이서 살펴보고,
+              궁금한 부분은 어린이·성인·외국인 톤으로 자연스럽게 물어보세요.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
@@ -251,20 +252,20 @@ export default function Home() {
       {/* AI 도슨트 미리보기 */}
       <section className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
         <div className="rounded-xl bg-[var(--color-paper-100)] p-8 sm:p-12 grid sm:grid-cols-3 gap-8 items-center">
-          <div className="sm:col-span-2">
+          <div className="sm:col-span-2 break-keep">
             <div className="text-xs tracking-[0.3em] text-[var(--color-vermilion-500)] uppercase mb-2">
-              AI Docent
+              AI Docent · 사이
             </div>
             <h3
               className="text-2xl sm:text-3xl font-bold text-[var(--color-ink-900)] mb-3"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              321명의 큐레이터가 답해드려요
+              큐레이터의 시선과 당신 사이
             </h3>
             <p className="text-[var(--color-ink-700)] leading-relaxed">
-              "조선시대 잔치 그림이 궁금해요" 같이 자연스럽게 물어보세요.
-              관련된 큐레이터 해설을 찾아 어린이·성인·외국인 톤으로 풀어드립니다.
-              본문에 없는 내용은 만들어내지 않고, 출처도 함께 보여줘요.
+              "조선시대 잔치 그림이 궁금해요"처럼 편하게 물어보세요.
+              관련된 큐레이터 해설을 찾아 어린이·성인·외국인 톤으로 풀어드리고,
+              자료에 없는 건 만들어내지 않으며 출처도 함께 보여줘요.
             </p>
           </div>
           <Link

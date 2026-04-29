@@ -115,7 +115,7 @@ async def lifespan(app: FastAPI):
     # shutdown: nothing to clean explicitly
 
 
-app = FastAPI(title="K-Curator API", lifespan=lifespan)
+app = FastAPI(title="사이 (SAI) API", lifespan=lifespan)
 
 # CORS: 환경변수로 추가 origin 등록 가능. 기본은 dev localhost.
 _default_origins = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174"

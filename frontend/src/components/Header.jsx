@@ -32,15 +32,16 @@ export default function Header() {
       className="sticky top-0 z-30 bg-[var(--color-paper-50)]/85 backdrop-blur border-b border-[var(--color-paper-200)]"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-baseline gap-2 group min-w-0">
+        <Link to="/" className="flex items-baseline gap-3 group min-w-0">
           <span
             className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-ink-900)] group-hover:text-[var(--color-vermilion-500)] transition"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.5em' }}
+            aria-label="사이"
           >
-            K-Curator
+            사이
           </span>
           <span className="hidden md:inline text-xs text-[var(--color-ink-500)] truncate">
-            국립중앙박물관 큐레이터 추천 321선
+            작품과 당신 사이
           </span>
         </Link>
 
