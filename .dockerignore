@@ -1,0 +1,30 @@
+# 도커 이미지에 포함할 필요 없는 것들
+.git
+.gitignore
+.venv
+.env
+.env.*
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+
+# Node 산출물 (Dockerfile 안에서 npm ci/build 다시 함)
+frontend/node_modules
+frontend/dist
+frontend/.vite
+
+# 디버그/로그
+data/processed/_*.log
+data/raw/_debug_*
+
+# 문서/도커파일 자체
+README.md
+Dockerfile
+.dockerignore
+docs/

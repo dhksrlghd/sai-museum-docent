@@ -1,0 +1,55 @@
+{
+  "relic_recommend_id": 519854,
+  "source_url": "https://www.museum.go.kr/MUSEUM/contents/M0501000000.do?schM=view&relicRecommendId=519854",
+  "scraped_at": "2026-04-29T14:36:32",
+  "title": "진씨 등 13인 조상비[陳氏合右十三人造像碑]",
+  "subtitle": "",
+  "curator": "강건우",
+  "title_image_url": "https://www.museum.go.kr/files/zin/curator_207_tit.gif",
+  "metadata": {
+    "raw_caption": "진씨 등 13인 조상비, 수 개황 2년(582), 대리암, 높이 111.58cm, 폭 52.36cm, 두께 18.97cm, 덕수5664",
+    "artist": "",
+    "period": "수 개황 2년(582)",
+    "medium": "진씨 등 13인 조상비",
+    "size": "",
+    "collection_no": "",
+    "grade": ""
+  },
+  "images": [
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_207_1.jpg",
+      "caption": "진씨 등 13인 조상비, 수 개황 2년(582), 대리암, 높이 111.58cm, 폭 52.36cm, 두께 18.97cm, 덕수5664"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_207_2.jpg",
+      "caption": "진씨 등 13인 조상비 앞면 실측도면"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_207_3.jpg",
+      "caption": "진씨 등 13인 조상비의 뒷면"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_207_4.jpg",
+      "caption": "진씨 등 13인 조상비 뒷면 실측도면"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_207_5.jpg",
+      "caption": "진씨 등 13인 조상비의 오른쪽 면"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_207_6.jpg",
+      "caption": "진씨 등 13인 조상비의 왼쪽 면"
+    }
+  ],
+  "body": [
+    {
+      "type": "paragraph",
+      "text": "중국에 불교가 전래된 이래 새로운 형태의 시각 조형물인 조상비(造像碑)가 등장했습니다. 조상비는 상비(像碑), 비상(碑像), 불비상(佛碑像)이라고도 불리며, 남북조시대(南北朝時代, 386~589)부터 당대(唐代, 618~907)에 이르기까지 활발하게 제작되었습니다. 중국의 전통 조형물인 비(碑)와 다르게 조상비의 제작과 조성에는 엄격한 규칙이 존재하지 않았습니다. 중국의 비(碑)가 한정된 상류층만이 세울 수 있는 것이었다면, 조상비는 지배 계층뿐만 아니라 읍의(邑義) 즉 민간 신도 단체의 구성원들이 발원자로서 참여할 수 있었습니다. 국립중앙박물관 소장 조상비(덕수5664) 1점도 민간 신도 단체가 발원한 문화재입니다."
+    },
+    {
+      "type": "heading",
+      "text": "아로새긴 염원의 결정체, 조상비"
+    }
+  ],
+  "license": "국립중앙박물관이(가) 창작한 진씨 등 13인 조상비 저작물은 공공누리 \"출처표시+변경금지\" 조건에 따라 이용할 수 있습니다."
+}

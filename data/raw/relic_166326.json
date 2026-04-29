@@ -1,0 +1,134 @@
+{
+  "relic_recommend_id": 166326,
+  "source_url": "https://www.museum.go.kr/MUSEUM/contents/M0501000000.do?schM=view&relicRecommendId=166326",
+  "scraped_at": "2026-04-29T14:40:45",
+  "title": "신라인의 삶을 읽어 내는 텍스트, 토우",
+  "subtitle": "",
+  "curator": "안경숙",
+  "title_image_url": "https://www.museum.go.kr/files/zin/curator_120_tit.gif",
+  "metadata": {
+    "raw_caption": "토우장식 항아리, 계림로 30호 무덤 출토, 신라 5c, 높이 34.0cm, 국보, 국립경주박물관, 기탁140",
+    "artist": "",
+    "period": "신라 5c",
+    "medium": "토우장식 항아리",
+    "size": "",
+    "collection_no": "",
+    "grade": "국보"
+  },
+  "images": [
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_1.jpg",
+      "caption": "토우장식 항아리, 계림로 30호 무덤 출토, 신라 5c, 높이 34.0cm, 국보, 국립경주박물관, 기탁140"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_4.jpg",
+      "caption": "1926년 당시 토우가 출토된 지점"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_3.jpg",
+      "caption": "황남동 고분군 발굴장면"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_2.jpg",
+      "caption": "토우 노출 상태"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_5.jpg",
+      "caption": "동물 토우"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_6.jpg",
+      "caption": "사랑을 나누는 토우"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_7.jpg",
+      "caption": "사람 토우"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_8.jpg",
+      "caption": "성과 사랑"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_9.jpg",
+      "caption": "남자 토우"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_10.jpg",
+      "caption": "음악과 춤"
+    },
+    {
+      "url": "https://www.museum.go.kr/files/zin/curator_120_11.jpg",
+      "caption": "여흥과 노동"
+    }
+  ],
+  "body": [
+    {
+      "type": "paragraph",
+      "text": "토우란 흙을 재료로 만든 인형으로, 사람의 형상만이 아니고 여러 가지 동물이나 일상생활 용구, 가옥 등 모든 형태를 포함한 것입니다. 신라토우는 울고, 웃고, 노동하고 즐기던 신라인들의 일상을 입체적으로 세세하게 표현하고 있어 소략한 문헌이 전해주지 못하는 신라인들의 삶을 읽을 수 있는 훌륭한 텍스트라고 할 수 있습니다."
+    },
+    {
+      "type": "caption",
+      "text": "토우장식 항아리, 계림로 30호 무덤 출토, 신라 5c, 높이 34.0cm, 국보, 국립경주박물관, 기탁140",
+      "image_url": "https://www.museum.go.kr/files/zin/curator_120_1.jpg"
+    },
+    {
+      "type": "paragraph",
+      "text": "얼핏 보기에 조물조물 무심하게 만든 듯하지만 많은 표정과 의미를 담고 있는 7cm 가량의 작은 토우들은 1926년 5월 경동선(慶東線) 경주역 개축공사를 위해 흙을 채취하던 과정에서 우연히 발견되었습니다. 이 공사는 대구에서 경주, 울산을 거쳐 부산까지 가던 협궤철도를 광궤로 고치면서, 경주역에 기관차 차고를 짓기 위한 용지 매립에 많은 흙이 필요했기 때문에 시작되었습니다. 이것은 황남동 대고분군 사이에 있던 밭의 흙을 채굴해 약 1km 정도 떨어진 기관차 차고 부지까지 십 여대의 광차를 이어서 운반하는 대규모 공사였습니다."
+    },
+    {
+      "type": "caption",
+      "text": "1926년 당시 토우가 출토된 지점",
+      "image_url": "https://www.museum.go.kr/files/zin/curator_120_4.jpg"
+    },
+    {
+      "type": "caption",
+      "text": "황남동 고분군 발굴장면",
+      "image_url": "https://www.museum.go.kr/files/zin/curator_120_3.jpg"
+    },
+    {
+      "type": "caption",
+      "text": "토우 노출 상태",
+      "image_url": "https://www.museum.go.kr/files/zin/curator_120_2.jpg"
+    },
+    {
+      "type": "paragraph",
+      "text": "당시 조사자들이 붕괴되는 흙속에서 할 수 있었던 일이라고는 고작해야 쏟아지는 유물을 채집하는 것과, 간간이 토양의 단면에 남아 있는 석곽의 잔해를 급히 스케치하거나 촬영하는 정도였을 뿐입니다. 이 지역 무덤은 길이 약 2m, 폭 70~80cm 정도여서 겨우 한 사람이 누울 정도로 좁은 수혈식 석곽이었습니다. 장신구도 없이 이따금 유리구슬이나 반지가 발견되는 정도였으며, 부장품은 대체로 목이 짧은 단지나 굽다리 접시였는데, 이 구역에서 출토된 토기에는 토우가 부착된 것이 많았다는 당시의 기록이 남아 있습니다."
+    },
+    {
+      "type": "paragraph",
+      "text": "토우가 발견된 지점은 현재 경주시청 별관 부근입니다. 당시의 조사는 파괴된 유적에서 단순히 유물을 수집하는 작업일 뿐이었지만, 인물·동물상으로 장식된 토기가 다수 발견되었고, 그 중에는 성적인 풍속의례를 표현한 것도 많았다고 합니다. 특히, 굽다리 접시 뚜껑의 손잡이 주위에 부착된 것이 압도적으로 많았습니다. 종류도 다양했는데, 동물로는 먹이를 물고 있는 개, 나무 위에 올라앉은 원숭이, 말, 소, 사슴, 돼지, 호랑이, 멧돼지와 물고기, 거북, 게, 불가사리, 게다가 뱀, 개구리, 도마뱀 등의 파충류에 이르기까지 풍부합니다. 또한 사람 토우도 많았습니다. 말 탄 사람이나 배를 타고 있는 사람, 혹은 물건을 나르는 사람 등 당시의 풍습을 나타내는 것도 있었지만, 대부분은 악기를 연주하거나 춤을 추는 사람, 그리고 사랑을 나누는 등 남녀의 성행위를 적나라하게 표현한 것들입니다."
+    },
+    {
+      "type": "caption",
+      "text": "동물 토우",
+      "image_url": "https://www.museum.go.kr/files/zin/curator_120_5.jpg"
+    },
+    {
+      "type": "paragraph",
+      "text": "현재 토우들은 따로 떨어져 보관되어 있지만, 당시 발굴자의 증언에 의하면 토우들은 대체로 항아리, 굽다리 접시 등의 어깨, 목 또는 뚜껑에 붙어 있었고, 더러는 그릇받침에도 붙어 있었던 것을 발굴 당시 뜯어낸 것이라고 합니다. 그러므로 이 토우들이 어떤 형태의 토기에 어떠한 모양으로 조합을 이루며 배열되어 있었는지는 분명하지 않습니다. 다만 토우가 붙어 있는 몇몇 항아리나 뚜껑 등에서 원래 모습을 짐작해볼 수 있을 뿐입니다."
+    },
+    {
+      "type": "paragraph",
+      "text": "이와 같이 토우로 장식한 항아리 등은 성기나 가슴 등 인체 부위를 과장해서 표현하거나, 성행위를 사실적으로 표현함으로써 다산과 풍요를 빌거나, 천적관계인 뱀과 개구리를 함께 부착하여 벽사의 뜻을 담고 있습니다. 이는 다산을 기원하고 풍요의 힘을 상징하는 고대부터의 신앙적 표현이었습니다. 이것은 인간의 생식기를 다산·풍요의 상징으로 인식했던 선사시대의 풍속이 이때에도 지속되었음을 의미합니다. 아울러 토우에 보이는 인간의 생식기는 모두 실제보다 과장되게 표현되어 있는데, 특히 남자의 생식기는 그 장대함을 강조하고 있고, 여자의 경우 생식기와 가슴부분을 지나치게 강조했다는 점 역시 다산, 풍요와 관련하여 이해할 수 있습니다."
+    },
+    {
+      "type": "caption",
+      "text": "사랑을 나누는 토우",
+      "image_url": "https://www.museum.go.kr/files/zin/curator_120_6.jpg"
+    },
+    {
+      "type": "paragraph",
+      "text": "악기를 연주하거나 춤을 추는 모습의 토우들은 무덤의 주인공이 저 세상에 가서도 현세와 같은 삶을 누리며 영생하기를 기원하는 의미로 해석할 수 있습니다. 또한, 인간이라면 누구나 겪을 수밖에 없는 생로병사의 과정, 그 중에서도 죽음으로 인한 슬픔에 빠지는 것을 차단하여 살아남은 사람들이 삶의 의지를 다지도록 하고 생명의 기쁨을 되찾아 주는 지혜로 해석할 수 있습니다. 사랑하는 이를 잃고 난 뒤 삶의 끈을 놓고 싶을 만큼 괴롭고 슬프겠지만 슬퍼하되 너무 과하지 않을 것, 죽음의 숙명을 거부하고 생명의 길을 환기시켜 주는 것, 이것이야말로 산 사람과 죽은 사람 모두를 위한 상생의 길이 아니었을까요?"
+    },
+    {
+      "type": "caption",
+      "text": "음악과 춤",
+      "image_url": "https://www.museum.go.kr/files/zin/curator_120_10.jpg"
+    },
+    {
+      "type": "heading",
+      "text": "토우로 읽어낸 신라인의 삶"
+    }
+  ],
+  "license": "국립중앙박물관이(가) 창작한 신라인의 삶을 읽어 내는 텍스트, 토우 저작물은 공공누리 \"출처표시+변경금지\" 조건에 따라 이용할 수 있습니다."
+}

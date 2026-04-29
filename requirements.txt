@@ -1,0 +1,20 @@
+# K-Curator 백엔드 런타임 의존성
+# 스크래핑 단계는 빌드 시점에만 필요해서 제외 가능하지만,
+# 단일 이미지 단순화를 위해 함께 둠.
+
+requests>=2.32,<3
+python-dotenv>=1.0,<2
+beautifulsoup4>=4.12,<5
+lxml>=5.0,<7
+
+# 벡터 검색 + 임베딩
+chromadb>=1.5,<2
+sentence-transformers>=5.0,<6
+
+# LLM
+openai>=2.0,<3
+
+# 웹 서버
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+sse-starlette>=2.0,<3
