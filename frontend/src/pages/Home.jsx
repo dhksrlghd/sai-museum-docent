@@ -12,6 +12,7 @@ const HERO_PICKS = [
 export default function Home() {
   const [hero, setHero] = useState(null)
   const [picks, setPicks] = useState([])
+  const [special, setSpecial] = useState([])
   const [hi, setHi] = useState(0)
 
   useEffect(() => {
@@ -28,9 +29,18 @@ export default function Home() {
         })
       )
       const all = await listWorks({ limit: 12, offset: 0 })
+      let exhi = []
+      try {
+        const r = await fetch('/api/exhibitions')
+        if (r.ok) {
+          const j = await r.json()
+          exhi = j.special || []
+        }
+      } catch { /* ignore */ }
       if (cancelled) return
       setHero(heroData.filter(Boolean))
       setPicks(all.items || [])
+      setSpecial(exhi)
     }
     load()
     return () => { cancelled = true }
@@ -45,6 +55,23 @@ export default function Home() {
 
   return (
     <div className="min-h-full">
+      {/* 진행중 특별전 띠 (있을 때만) */}
+      {special.length > 0 && (
+        <Link
+          to="/exhibitions"
+          className="block bg-[var(--color-vermilion-50)] border-b border-[var(--color-paper-200)] py-2 px-5 sm:px-8 text-center text-sm hover:bg-[var(--color-vermilion-500)] hover:text-white transition group"
+        >
+          <span className="font-semibold text-[var(--color-vermilion-600)] group-hover:text-white">
+            지금 박물관에서
+          </span>
+          <span className="mx-2 text-[var(--color-ink-500)] group-hover:text-white/70">·</span>
+          <span className="text-[var(--color-ink-700)] group-hover:text-white">
+            특별전 {special.length}건 진행중
+          </span>
+          <span className="ml-3 text-[var(--color-ink-500)] group-hover:text-white/80">→</span>
+        </Link>
+      )}
+
       {/* HERO */}
       <section className="relative bg-[var(--color-ink-900)] text-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24 grid lg:grid-cols-2 gap-10 items-center">

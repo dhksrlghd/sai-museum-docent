@@ -7,6 +7,7 @@ import Home from './pages/Home.jsx'
 import Browse from './pages/Browse.jsx'
 import Work from './pages/Work.jsx'
 import Ask from './pages/Ask.jsx'
+import Exhibitions from './pages/Exhibitions.jsx'
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'browse', element: <Browse /> },
+      { path: 'exhibitions', element: <Exhibitions /> },
       { path: 'work/:id', element: <Work /> },
       { path: 'ask', element: <Ask /> },
     ],

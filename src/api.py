@@ -50,6 +50,8 @@ _state: dict = {
     "collection": None,
     "thumbnails": {},  # relic_id -> list-card info
     "openai": None,
+    "permanent": [],   # 상설전시 실 리스트
+    "special": [],     # 특별전 리스트
 }
 
 
@@ -75,6 +77,16 @@ async def lifespan(app: FastAPI):
             it["relic_recommend_id"]: it for it in data.get("items", [])
         }
         print(f"[api] Loaded {len(_state['thumbnails'])} thumbnail entries")
+
+    perm_path = RAW_DIR / "permanent.json"
+    if perm_path.exists():
+        _state["permanent"] = json.loads(perm_path.read_text(encoding="utf-8")).get("rooms", [])
+        print(f"[api] Loaded {len(_state['permanent'])} permanent rooms")
+
+    sp_path = RAW_DIR / "special.json"
+    if sp_path.exists():
+        _state["special"] = json.loads(sp_path.read_text(encoding="utf-8")).get("exhibitions", [])
+        print(f"[api] Loaded {len(_state['special'])} special exhibitions")
 
     if not os.getenv("OPENAI_API_KEY"):
         print("[api] WARNING: OPENAI_API_KEY not set — chat endpoint will fail")
@@ -178,6 +190,46 @@ async def list_works(
     if limit:
         items = items[offset : offset + limit]
     return {"total": total, "offset": offset, "items": items}
+
+
+@app.get("/api/exhibitions")
+async def list_exhibitions() -> dict:
+    """진행 중인 특별전/테마전 + 상설관 안내."""
+    halls: list[dict] = []
+    seen = set()
+    for room in _state["permanent"]:
+        h = room.get("hall", "")
+        if h and h not in seen:
+            seen.add(h)
+            halls.append(
+                {
+                    "name": h,
+                    "floor": room.get("floor", ""),
+                    "rooms": [
+                        {
+                            "name": r.get("room_name", ""),
+                            "showroom_code": r.get("showroom_code", ""),
+                            "url": r.get("url", ""),
+                            "works_count": len(r.get("works") or []),
+                        }
+                        for r in _state["permanent"]
+                        if r.get("hall") == h
+                    ],
+                }
+            )
+    return {
+        "halls": halls,
+        "special": _state["special"],
+    }
+
+
+@app.get("/api/halls/{hall_name}")
+async def get_hall(hall_name: str) -> dict:
+    """특정 관의 상세 (실 리스트 + 각 실 작품 리스트)."""
+    rooms = [r for r in _state["permanent"] if r.get("hall") == hall_name]
+    if not rooms:
+        raise HTTPException(404, f"hall '{hall_name}' not found")
+    return {"hall": hall_name, "floor": rooms[0].get("floor", ""), "rooms": rooms}
 
 
 @app.get("/api/works/{relic_id}")
