@@ -1,5 +1,5 @@
 """
-K-Curator: 작품 이미지 CLIP 임베딩 → Chroma 인덱스
+사이 (SAI): 작품 이미지 CLIP 임베딩 → Chroma 인덱스
 - 입력: data/raw/relic_*.json 의 images[] 필드 (1,400+장)
 - 모델: sentence-transformers/clip-ViT-B-32-multilingual-v1 (한국어 텍스트도 같은 공간)
 - 출력: data/chroma/ 에 'kcurator_images' 컬렉션

@@ -1,5 +1,5 @@
 """
-K-Curator: 전체 큐레이터 추천 작품 자동 스크래핑
+사이 (SAI): 전체 큐레이터 추천 작품 자동 스크래핑
 - 입력: data/raw/relic_list.json (scrape_list.py 결과)
 - 동작: 각 ID마다 scrape_one.scrape() 호출 → data/raw/relic_{ID}.json 저장
 - 이미 저장된 파일은 스킵하므로 중간 재시작 가능

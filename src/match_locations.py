@@ -1,5 +1,5 @@
 """
-K-Curator: 추천 작품 ↔ 상설 작품 매칭
+사이 (SAI): 추천 작품 ↔ 상설 작품 매칭
 - 추천 321점의 작품 제목과 상설 643점의 작품명을 비교
 - 매칭되면 추천 작품에도 hall/floor/room_name 위치 메타를 부착
 - 출력: data/raw/relic_locations.json (relic_id → location 매핑)

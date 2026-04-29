@@ -1,5 +1,5 @@
 """
-K-Curator: 큐레이터 추천 작품 1개 스크래핑
+사이 (SAI): 큐레이터 추천 작품 1개 스크래핑
 - 입력: relicRecommendId (예: 2351292 = 〈기영회도〉)
 - 출력: data/raw/relic_{ID}.json
 """

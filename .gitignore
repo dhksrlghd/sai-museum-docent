@@ -32,3 +32,8 @@ data/processed/chunks.jsonl
 .claude/
 .DS_Store
 Thumbs.db
+
+# AI 어시스턴트 internal handoff 문서 (CLAUDE.md)
+# — 일반 독자에겐 노이즈. 정식 인수인계 정보는 docs/07-development-journey.md에 정리됨.
+CLAUDE.md
+src/CLAUDE.md

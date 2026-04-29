@@ -1,5 +1,5 @@
 """
-K-Curator: FastAPI 백엔드
+사이 (SAI): FastAPI 백엔드
 - POST /api/chat   — 검색 + LLM 스트리밍 (Server-Sent Events)
 - GET  /api/works/{id} — 작품 상세 JSON (출처 카드 클릭 시 사용)
 - GET  /api/health — 헬스체크

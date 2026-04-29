@@ -1,5 +1,5 @@
 """
-K-Curator: 큐레이터 추천 작품 ID 리스트 수집
+사이 (SAI): 큐레이터 추천 작품 ID 리스트 수집
 - 출처: https://www.museum.go.kr/MUSEUM/contents/M0501000000.do?searchId=recommend&relicRecommendUse=Y
 - pageSize=500 으로 한 번에 321건을 받아온다.
 - 출력: data/raw/relic_list.json

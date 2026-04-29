@@ -1,5 +1,5 @@
 """
-K-Curator: Chroma 인덱스 검색 (RAG 검증용)
+사이 (SAI): Chroma 인덱스 검색 (RAG 검증용)
 사용법:
     python src/search.py "조선시대 잔치 그림"
     python src/search.py "조선시대 잔치 그림" --k 10

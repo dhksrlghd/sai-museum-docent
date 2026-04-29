@@ -1,5 +1,5 @@
 """
-K-Curator: RAG 챗 파이프라인
+사이 (SAI): RAG 챗 파이프라인
 - 검색: Chroma + e5-small (build_index.py와 동일 모델)
 - 생성: OpenAI gpt-4o-mini
 - 톤 모드: adult(성인) / kid(어린이) / foreign(외국인용 영어)

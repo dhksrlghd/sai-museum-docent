@@ -1,5 +1,5 @@
 """
-K-Curator: 본문 청킹 + 임베딩 + Chroma 인덱스 구축
+사이 (SAI): 본문 청킹 + 임베딩 + Chroma 인덱스 구축
 - 입력: data/raw/relic_*.json (321건)
 - 청킹: heading 단위 섹션. heading 등장 전의 도입부는 'intro' 섹션.
 - 임베딩: intfloat/multilingual-e5-small (passage: 프리픽스 사용)
