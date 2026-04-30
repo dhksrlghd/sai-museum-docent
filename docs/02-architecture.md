@@ -2,47 +2,42 @@
 
 ## 시스템 한 장 요약
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         사용자 브라우저                           │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              │ HTTPS
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│        Hugging Face Space (단일 Docker 컨테이너, 무료 CPU)       │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              FastAPI · uvicorn (port 7860)              │   │
-│  │                                                         │   │
-│  │   /api/health · /api/today · /api/works · /api/chat     │   │
-│  │   /api/plan   · /api/exhibitions · /api/works/{id}/...  │   │
-│  │                                                         │   │
-│  │   /{path:*} → 빌드된 React SPA fallback                  │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│           │              │              │                       │
-│           ▼              ▼              ▼                       │
-│   ┌──────────────┐ ┌────────────┐ ┌─────────────┐              │
-│   │  e5-small    │ │  CLIP      │ │  OpenAI     │              │
-│   │  (텍스트     │ │  (이미지   │ │  gpt-4o-    │              │
-│   │   임베딩)    │ │   임베딩)  │ │   mini      │              │
-│   │  118MB       │ │  600MB     │ │  (외부 API) │              │
-│   └──────┬───────┘ └─────┬──────┘ └─────────────┘              │
-│          │               │                                      │
-│          ▼               ▼                                      │
-│   ┌──────────────────────────────────┐                          │
-│   │  Chroma Persistent Client        │                          │
-│   │   ├─ kcurator_relics  (1,265 청크)│                         │
-│   │   └─ kcurator_images  (733 임베딩)│                         │
-│   └──────────────────────────────────┘                          │
-│                              │                                  │
-│   ┌──────────────────────────┴──────────┐                       │
-│   │  data/raw/  — 321 작품 JSON,        │                       │
-│   │              relic_list.json,       │                       │
-│   │              permanent.json (36실), │                       │
-│   │              special.json (5건),    │                       │
-│   │              relic_locations.json   │                       │
-│   └─────────────────────────────────────┘                       │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+  user[사용자 브라우저]
+
+  subgraph hf["🤗 Hugging Face Space · 단일 Docker · CPU"]
+    api["**FastAPI · uvicorn :7860**<br/>/api/health · /api/today · /api/works<br/>/api/chat · /api/plan · /api/exhibitions<br/>/api/works/{id}/similar<br/>/* → React SPA fallback"]
+
+    subgraph models["모델 + 외부 API"]
+      e5[["e5-small<br/>텍스트 임베딩<br/>118MB"]]
+      clip[["CLIP-ViT-B/32<br/>이미지 임베딩<br/>600MB"]]
+      openai[["OpenAI<br/>gpt-4o-mini<br/>(외부 API)"]]
+    end
+
+    subgraph chroma["Chroma Persistent Client"]
+      relics[("kcurator_relics<br/>1,265 청크")]
+      images[("kcurator_images<br/>733 임베딩")]
+    end
+
+    raw[("data/raw/<br/>321 작품 JSON · relic_list ·<br/>permanent (36실) · special (5건) ·<br/>relic_locations")]
+  end
+
+  user -- HTTPS --> api
+  api --> e5
+  api --> clip
+  api --> openai
+  e5 --> relics
+  clip --> images
+  api --> raw
+  api --> chroma
+
+  classDef ext fill:#fbf2ef,stroke:#a0301a,color:#15110a
+  classDef store fill:#f3efe6,stroke:#3d362b,color:#15110a
+  classDef compute fill:#fff,stroke:#3d362b,color:#15110a
+  class openai ext
+  class relics,images,raw store
+  class e5,clip,api compute
 ```
 
 ## 구성 요소
@@ -108,32 +103,31 @@ frontend/
 
 ### 사용자 챗 요청 흐름
 
-```
-사용자 입력 ("기영회도가 뭐야?")
-    │
-    ▼
-POST /api/chat  { query, mode, k }
-    │
-    ▼
-1) e5-small.encode("query: " + query)         ← 384-dim 벡터
-    │
-    ▼
-2) Chroma kcurator_relics.query(top_k=5)      ← cosine 유사도
-    │
-    ▼
-3) Sources collect (작품 단위 dedupe + 썸네일 lookup)
-    │
-    ▼
-4) SSE event "sources" 송신 ─────────────► [프론트] 출처 카드 렌더
-    │
-    ▼
-5) GPT-4o-mini stream(system + user prompt)
-    │
-    ▼
-6) 토큰 단위 SSE event "token" 송신 ──────► [프론트] 답변 누적
-    │
-    ▼
-7) SSE event "done" ───────────────────► [프론트] streaming=false
+```mermaid
+sequenceDiagram
+    participant U as 사용자
+    participant F as React (AskBox)
+    participant A as FastAPI /api/chat
+    participant E as e5-small
+    participant C as Chroma
+    participant L as OpenAI gpt-4o-mini
+
+    U->>F: "기영회도가 뭐야?"
+    F->>A: POST {query, mode, k}
+    A->>E: encode("query: " + query)
+    E-->>A: 384-dim 벡터
+    A->>C: query top_k=5 (cosine)
+    C-->>A: 청크 + 메타
+    A->>A: collect_sources() — 작품 dedupe + 썸네일
+    A-->>F: SSE event "sources"
+    F-->>U: 출처 카드 렌더
+    A->>L: stream(system + user prompt)
+    loop 토큰 스트림
+        L-->>A: delta
+        A-->>F: SSE event "token"
+        F-->>U: 답변 누적 표시
+    end
+    A-->>F: SSE event "done"
 ```
 
 ### 빌드 시점 데이터 흐름 (Dockerfile)

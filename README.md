@@ -9,27 +9,56 @@ pinned: false
 short_description: 작품과 당신 사이 — 국립중앙박물관 큐레이터 해설 기반 RAG·멀티모달 도슨트
 ---
 
-# 사이 (SAI) · 작품과 당신 사이를 잇다
+<p align="center">
+  <a href="https://wangihong-k-curator.hf.space">
+    <img src="./assets/sai-banner.svg" alt="사이 SAI — 작품과 당신 사이를 잇다" width="100%"/>
+  </a>
+</p>
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-a0301a?style=flat-square)](https://wangihong-k-curator.hf.space)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](./LICENSE)
-[![HF Space](https://img.shields.io/badge/🤗-Hugging%20Face%20Space-yellow?style=flat-square)](https://huggingface.co/spaces/wangihong/k-curator)
-[![Python](https://img.shields.io/badge/Python-3.12-blue?style=flat-square&logo=python)](https://www.python.org/)
-[![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)](https://react.dev/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
+<h1 align="center">사이 (SAI) · 작품과 당신 사이를 잇다</h1>
 
-> **"챗봇이 아니라 박물관 컴패니언"** —
-> 국립중앙박물관 큐레이터 해설을 기반으로,
-> 가기 전엔 코스 추천, 가서는 작품 해설, 다녀와선 매일 다른 큐레이션을 보여주는
-> 풀스택 RAG·멀티모달 사이드 프로젝트.
->
-> 이름 **사이**는 "사이(in-between)"의 사이.
-> 작품과 당신 사이, 큐레이터의 시선과 관람객 사이, 어제와 오늘 사이를 잇는다는 뜻.
+<p align="center">
+  국립중앙박물관 큐레이터 해설을 기반으로,<br/>
+  <b>박물관 가기 전엔 코스 추천, 가서는 작품 해설, 다녀와선 매일 다른 큐레이션</b>을 보여주는<br/>
+  풀스택 RAG·멀티모달 사이드 프로젝트.
+</p>
 
-🔗 **Live**: [https://wangihong-k-curator.hf.space](https://wangihong-k-curator.hf.space)
-📚 **상세 문서**: [`docs/`](./docs/) — 9편의 단계별 설계·구현 회고
-📜 **라이선스**: 코드 MIT / 박물관 데이터 공공누리 3유형
-🎬 **데모 영상**: (TODO — 화면 녹화 후 `docs/images/`에 추가)
+<p align="center">
+  <a href="https://wangihong-k-curator.hf.space"><img alt="Live Demo" src="https://img.shields.io/badge/▶-Live%20Demo-a0301a?style=for-the-badge"/></a>
+  <a href="./docs/"><img alt="Docs" src="https://img.shields.io/badge/📚-9%20docs-3d362b?style=for-the-badge"/></a>
+  <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge"/></a>
+  <a href="https://github.com/dhksrlghd/sai-museum-docent/actions/workflows/build.yml"><img alt="Build" src="https://github.com/dhksrlghd/sai-museum-docent/actions/workflows/build.yml/badge.svg"/></a>
+</p>
+
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white"/>
+  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white"/>
+  <img alt="React" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white"/>
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white"/>
+  <img alt="Tailwind" src="https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white"/>
+  <img alt="OpenAI" src="https://img.shields.io/badge/OpenAI-gpt--4o--mini-412991?logo=openai&logoColor=white"/>
+  <img alt="Chroma" src="https://img.shields.io/badge/Chroma-1.5-1a1a1a"/>
+  <img alt="CLIP" src="https://img.shields.io/badge/CLIP-ViT--B%2F32-005CC5"/>
+  <img alt="e5-small" src="https://img.shields.io/badge/e5--small-multilingual-FFD43B"/>
+  <img alt="HF Spaces" src="https://img.shields.io/badge/🤗-Hugging%20Face%20Spaces-FFD21E"/>
+</p>
+
+<p align="center">
+  이름 <b>사이</b>는 "사이(in-between)"의 사이. 작품과 당신 사이, 큐레이터의 시선과 관람객 사이, 어제와 오늘 사이를 잇는다는 뜻.
+</p>
+
+---
+
+## 미리 보기
+
+> 라이브 사이트에서 캡처한 핵심 화면들. 클릭하면 해당 페이지로 이동.
+
+| 홈 · 매일의 큐레이션 | 코스 빌더 | 작품 상세 + 닮은 작품 |
+|:---:|:---:|:---:|
+| <a href="https://wangihong-k-curator.hf.space/"><img src="./docs/images/home.png" alt="홈" width="280"/></a> | <a href="https://wangihong-k-curator.hf.space/plan"><img src="./docs/images/plan-builder.png" alt="코스 빌더" width="280"/></a> | <a href="https://wangihong-k-curator.hf.space/work/2351292"><img src="./docs/images/work-detail.png" alt="작품 상세" width="280"/></a> |
+| 30개 테마 day-of-year 회전 | LLM 동선·시간·동반자 톤까지 | CLIP 이미지 유사도 추천 |
+
+> 캡처 이미지가 안 보이면 `docs/images/` 에 아직 추가 전입니다 — `docs/images/.gitkeep` 의 캡처 가이드 참고하시고 채워 넣으면 자동 표시됩니다.
 
 ## 무엇이 차별화되는가
 

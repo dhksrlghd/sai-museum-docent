@@ -1,0 +1,82 @@
+name: Build · Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  python-lint:
+    name: Python · 컴파일 검증
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install runtime deps (no torch — 가벼운 검사용)
+        run: |
+          python -m pip install --upgrade pip
+          # 무거운 ML 패키지 제외하고 순수 import 가능성만 확인
+          pip install fastapi pydantic python-dotenv requests beautifulsoup4 lxml sse-starlette openai
+
+      - name: Compile all .py
+        run: |
+          python -m compileall -q src
+          echo "✓ all src/*.py compile cleanly"
+
+      - name: Verify safe import (no side effects on import)
+        env:
+          OPENAI_API_KEY: dummy-key-for-import-check
+          EMUSEUM_API_KEY: dummy
+        run: |
+          cd src
+          python -c "
+          import importlib, sys
+          # 무거운 모듈은 import만 했을 때 성공해야 함 (실제 모델 로딩은 lifespan에서만)
+          mods = ['rag', 'build_index', 'daily_pick', 'match_locations',
+                  'scrape_one', 'scrape_list', 'scrape_all',
+                  'scrape_permanent', 'scrape_special',
+                  'explore_data', 'test_api']
+          ok = 0
+          for m in mods:
+              try:
+                  importlib.import_module(m)
+                  ok += 1
+              except Exception as e:
+                  print(f'FAIL {m}: {type(e).__name__}: {e}')
+                  sys.exit(1)
+          print(f'✓ {ok}/{len(mods)} modules import cleanly')
+          "
+
+  frontend-build:
+    name: Frontend · Vite build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+      - name: Show dist size
+        working-directory: frontend
+        run: |
+          echo "## Build output" >> $GITHUB_STEP_SUMMARY
+          du -sh dist >> $GITHUB_STEP_SUMMARY
+          ls -la dist/assets >> $GITHUB_STEP_SUMMARY
